@@ -7,11 +7,12 @@ test("has title", async ({ page }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Shop Lab Diamonds/);
 
+  //adjust weight of stones from 2 carats
   const caratBar = await page.locator("#txtminWeight");
 
   if (await caratBar.isVisible()) {
     await caratBar.fill("2");
-    console.log("😊  stone weight is now 2 carats and more");
+    console.log("😊 stones weight is now 2 carats and more");
   } else {
     throw new Error("💀 carat bar is not found!");
   }
