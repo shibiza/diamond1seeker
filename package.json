@@ -2,7 +2,9 @@
   "name": "diamond1seeker",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+"start": "nodemon index.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -10,5 +12,10 @@
   "devDependencies": {
     "@playwright/test": "^1.50.1",
     "@types/node": "^22.13.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "grammy": "^1.34.1",
+    "nodemon": "^3.1.9"
   }
 }

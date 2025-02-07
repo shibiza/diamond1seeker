@@ -1,8 +1,14 @@
-// @ts-check
+// Импорт библиотек
 import { test, expect } from "@playwright/test";
 import fs from "fs";
 import path from "path";
+import fetch from "node-fetch"; // Импортируем fetch (если Node.js < 17.5)
+import dotenv from "dotenv"; // Импортируем dotenv для переменных окружения
 
+// Загружаем переменные из .env
+dotenv.config();
+
+// Основной тест для поиска бриллиантов
 test("check for diamonds with incorrect prices", async ({ page }) => {
   await page.goto("https://www.luvansh.com/shop-diamond");
 
@@ -34,6 +40,7 @@ test("check for diamonds with incorrect prices", async ({ page }) => {
       .locator(".price-column")
       .textContent(); // Колонка цены
     const link = await diamondRows.nth(i).locator("a").getAttribute("href"); // Ссылка на бриллиант
+    const fullLink = `https://www.luvansh.com${link}`; // Полная ссылка
 
     if (priceText) {
       const price = parseFloat(priceText.replace("$", "").trim());
@@ -41,18 +48,17 @@ test("check for diamonds with incorrect prices", async ({ page }) => {
       // Проверяем, если цена ниже порога
       if (price < priceThreshold) {
         console.log(
-          `❗ Found diamond with low price: $${price}, link: ${link}`
+          `❗ Found diamond with low price: $${price}, link: ${fullLink}`
         );
 
         // Дополнительно: записываем информацию в файл
         fs.appendFileSync(
           path.resolve(__dirname, "low_price_diamonds.txt"),
-          `Price: $${price}, Link: ${link}\n`
+          `Price: $${price}, Link: ${fullLink}\n`
         );
 
-        // Можно интегрировать отправку сообщения через Telegram или email
-        // Например, используя Telegram Bot API
-        await sendTelegramNotification(price, `https://www.luvansh.com${link}`);
+        // Отправка уведомления в Telegram
+        await sendTelegramNotification(price, fullLink);
       }
     }
   }
@@ -62,8 +68,8 @@ test("check for diamonds with incorrect prices", async ({ page }) => {
 
 // Функция для отправки уведомления через Telegram
 async function sendTelegramNotification(price, link) {
-  const botToken = "YOUR_TELEGRAM_BOT_TOKEN"; // Замените на ваш токен
-  const chatId = "YOUR_CHAT_ID"; // Замените на ваш Chat ID
+  const botToken = process.env.BOT_TOKEN; // Токен бота
+  const chatId = process.env.CHAT_ID; // chatId, куда отправлять уведомления
   const message = `⚠️ Diamond found with price $${price}! Check it out: ${link}`;
 
   const response = await fetch(
@@ -72,7 +78,7 @@ async function sendTelegramNotification(price, link) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        chat_id: chatId,
+        chat_id: chatId, // Добавили chatId в тело запроса
         text: message,
       }),
     }
