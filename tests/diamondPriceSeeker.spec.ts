@@ -2,7 +2,6 @@
 import { test, expect } from "@playwright/test";
 import fs from "fs";
 import path from "path";
-import fetch from "node-fetch"; // Импортируем fetch (если Node.js < 17.5)
 import dotenv from "dotenv"; // Импортируем dotenv для переменных окружения
 
 // Загружаем переменные из .env
@@ -67,7 +66,7 @@ test("check for diamonds with incorrect prices", async ({ page }) => {
 });
 
 // Функция для отправки уведомления через Telegram
-async function sendTelegramNotification(price, link) {
+async function sendTelegramNotification(price: number, link: string): Promise<void> {
   const botToken = process.env.BOT_TOKEN; // Токен бота
   const chatId = process.env.CHAT_ID; // chatId, куда отправлять уведомления
   const message = `⚠️ Diamond found with price $${price}! Check it out: ${link}`;
