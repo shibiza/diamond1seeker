@@ -12,7 +12,7 @@ test("check for diamonds with incorrect prices", async ({ page }) => {
   await page.goto("https://www.luvansh.com/shop-diamond");
 
   // Проверяем, что заголовок страницы корректный
-  await expect(page).toHaveTitle(/Shop Lab Diamonds/);
+  await expect(page).toHaveTitle(/Shop Diamonds/);
 
   // Устанавливаем минимальный вес камней в 2 карата
   const caratBar = await page.locator("#txtminWeight");
