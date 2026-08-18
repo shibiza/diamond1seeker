@@ -2,30 +2,49 @@
 import { test, expect } from "@playwright/test";
 import fs from "fs";
 import path from "path";
-import dotenv from "dotenv"; // Импортируем dotenv для переменных окружения
+import dotenv from "dotenv"; 
 
-// Загружаем переменные из .env
 dotenv.config();
 
-// Основной тест для поиска бриллиантов
 test("check for diamonds with incorrect prices", async ({ page }) => {
-  await page.goto("https://www.luvansh.com/shop-diamond");
 
-  // Проверяем, что заголовок страницы корректный
+  const diamondShapeRound = await page.getByRole('img', { name: 'Round' }).first();
+  const colourSliderMin = await page.locator('#colorSlider');
+  const colorDragZone = await page.locator('.slider-drag-zone').first();
+
+  const claritySlider = await page.getByTestId("claritySlider");
+  const caratMinInputBar = await page.locator(".caratMinInput");
+  const caratMaxInputBar = await page.locator(".caratMaxInput");
+  const priceBar = await page.locator('#priceMin');
+  const cutSlider = await page.locator(".noUI-touch-area");
+
+  const diamondRows = await page.locator(".diamond-row");
+  const diamondCount = await diamondRows.count();
+
+  await page.goto("https://www.luvansh.com/shop-diamond");
   await expect(page).toHaveTitle(/Shop Diamonds/);
 
-  // Устанавливаем минимальный вес камней в 2 карата
-  const caratBar = await page.locator("#txtminWeight");
-  if (await caratBar.isVisible()) {
-    await caratBar.fill("2");
-    console.log("😊 Stones weight is now 2 carats and more");
+  if(!diamondShapeRound){
+    throw new Error("there are no round diamonds");
   } else {
-    throw new Error("💀 Carat bar is not found!");
+  await diamondShapeRound.click();
   }
 
-  // Дожидаемся загрузки списка бриллиантов
-  const diamondRows = await page.locator(".diamond-row"); // Класс строк списка (примерный)
-  const diamondCount = await diamondRows.count();
+  const colourBox = await colorDragZone.boundingBox();
+  if(!colourBox){
+  throw new Error("Slider drag zone was not found");
+  }  
+ // await page.mouse.move(colourBox)
+
+
+  await expect(caratMinInputBar).toBeVisible();
+  await expect(caratMaxInputBar).toBeVisible();
+
+  await caratMinInputBar.fill("1");
+  console.log("choosing stones with min 1 carat weight");
+  await caratMaxInputBar.fill("1.5");
+  console.log("max weight is 1.5 carats now");
+  
 
   console.log(`🔍 Found ${diamondCount} diamonds in the list.`);
 
