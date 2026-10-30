@@ -1,17 +1,21 @@
 {
   "name": "diamond1seeker",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
-"start": "nodemon index.js"
-},
+     "start": "nodemon index.js",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "show-report": "playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "@playwright/test": "^1.50.1",
-    "@types/node": "^22.13.1"
+    "@types/node": "^22.13.1",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
